@@ -4,8 +4,8 @@
 }
 
 body {
-    font-family: verdana, Geneva, sans-serif;
-
+    font-family: arial, Arial Unicode MS, sans-serif;
+    
     display: inline-flex;
     align-items: stretch;
     flex-direction: column;
