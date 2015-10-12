@@ -128,7 +128,7 @@ label.toggle > input:checked + span {
 }
 
 .toggle-label {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 #no-fingering {
