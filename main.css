@@ -123,12 +123,12 @@ label.toggle > input:checked + span {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    min-height: 65px;
+    min-height: 70px;
     margin: 20px 0;
 }
 
 .toggle-label {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 #no-fingering {
