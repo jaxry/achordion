@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>aChordion</title>
+    <meta name='description' content='Accordion button finder. Find the bass buttons to play any chord.'>
+    
+    <link rel='stylesheet' href='main.css'>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1 id='achordion'>a<span>Chord</span>ion</h1>
+        <em>Find bass fingerings for any chord</em>
+    </header>
+
+    <div id='accordion-layout-container'>
+        <label>Layout: <select id='accordion-layout-selector'></select></label>
+    </div>
+
+    <p id='instructions'><strong>Instructions:</strong> After entering the notes of a chord, press one button of each color on your accordion to play it.</p>
+
+    <div id='buttonboard'></div>
+
+    <div id='combo-select'>
+        <p id='no-fingering'>No possible fingering!</p>
+        <p id='fingerings' class='toggle-label'>Fingerings:</p>
+        <div id='combo-toggles'></div>
+    </div>
+
+    <div id='notes'>
+        <p class='toggle-label'>Enter Notes:</p>
+        <div id='note-toggles'></div>
+    </div>
+
+    <div id='credits'>
+        By Lucas Crane | <a href='http://www.github.com/jaxry'>www.github.com/jaxry</a></p>
+    </div>
+
+<script src='main.js'></script>
+</body>
+</html>

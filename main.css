@@ -1,0 +1,146 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+    font-family: verdana, Geneva, sans-serif;
+
+    display: inline-flex;
+    align-items: stretch;
+    flex-direction: column;
+    min-width: 100%;
+    text-align: center;
+}
+
+header {
+    text-align: left;
+    padding: 20px 75px;
+    color: #111;
+    background: #eef;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+h1#achordion > span {
+    color: #5c5;
+}
+
+#accordion-layout-container {
+    padding: 15px 0;
+    background: #eee;
+}
+
+select {
+    padding-right: 5px;
+}
+
+#instructions {
+    margin-top: 20px;
+    color: #222;
+}
+
+#buttonboard {
+    white-space: nowrap;
+    margin-top: 30px;
+}
+
+.buttonboard-name, .buttonboard-buttons {
+    display: inline-block;
+}
+
+.buttonboard-name {
+    text-align: right;
+    margin-right: 10px;
+}
+
+.acc-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 37px;
+    height: 37px;
+    margin: 3px 6px;
+
+    border-radius: 50%;
+    border: 2px solid #222;
+
+    opacity: 0.3;
+    transition: background 0.1s, opacity 0.1s;
+}
+
+.acc-button-highlight {
+    opacity: 1;
+}
+
+.acc-button-highlight[data-color='0'] {
+    background: #ffa;
+}
+
+.acc-button-highlight[data-color='1'] {
+    background: #faf;
+}
+
+.acc-button-highlight[data-color='2'] {
+    background: #afa;
+}
+
+label.toggle > input {
+    display: none;
+}
+
+label.toggle > span {
+    display: inline-block;
+    text-align: center;
+    padding: 10px;
+    line-height: 1.01;
+
+    border: 1px solid #444;
+    margin: 0 -1px -1px 0;
+
+    background: #eee;   
+}
+
+label.toggle > span:hover {
+    background: #cec;
+}
+
+label.toggle > input:checked + span {
+    background: #7d7;
+}
+
+#note-toggles {
+    margin-bottom: 5px;
+}
+
+#note-toggles > label.toggle > span {
+    width: 55px;
+}
+
+#combo-select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 65px;
+    margin: 20px 0;
+}
+
+.toggle-label {
+    margin-bottom: 10px;
+}
+
+#no-fingering {
+    color: #f00;
+}
+
+#credits {
+    margin-top: 75px;
+    color: #666;
+    font-size: 9pt;
+}
+
+#credits a {
+    color: #666;
+}

@@ -1,0 +1,1 @@
+All content licensed under the [GNU General Public License](http://www.gnu.org/licenses/gpl.html).
