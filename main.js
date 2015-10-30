@@ -524,10 +524,10 @@ function Chordplayer() {
             init(numTones);
 
             for (var n in noteMap.lowOctave) {
-                playNote(n, -1);
+                playNote(n, 0);
             }
             for (var n in noteMap.highOctave) {
-                playNote(n, 0);
+                playNote(n, 1);
             }
         }
     };
