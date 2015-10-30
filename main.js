@@ -13,7 +13,6 @@ var constants = {
     }
 };
 
-
 function getNote(i) {
     return ((i % 12) + 12) % 12;
 }
@@ -188,12 +187,10 @@ function Buttonboard() {
     };
 }
 
-function ComboSelect(buttonboard, chordfinder) {
+function ComboSelect(buttonboard, chordfinder, chordplayer) {
     var container = $('#combo-toggles');
     var noFingering = $('#no-fingering').hide();
     var label = $('#fingerings');
-    // var createdRadios = 0;
-    // var radios = [];
 
     var chordCombos;
 
@@ -204,6 +201,7 @@ function ComboSelect(buttonboard, chordfinder) {
     function radioChange() {
         var i = container.find('input:checked').val();
         buttonboard.highlight(chordCombos[i]);
+        chordplayer.play(chordCombos[i]);
     }
 
     function makeRadio(i) {
@@ -215,9 +213,6 @@ function ComboSelect(buttonboard, chordfinder) {
             )
             .change(radioChange)
             .appendTo(container);
-        
-        // radios.push(r);
-        // createdRadios++;
     }
 
     function initRadios(n) {
@@ -225,16 +220,6 @@ function ComboSelect(buttonboard, chordfinder) {
         for (var i = 0; i < n; i++) {
             makeRadio(i);
         }
-        // radios = [];
-        // for (var i = createdRadios; i < n; i++) {
-        //     makeRadio(i);
-        // }
-        // for (var i = 0; i < n; i++) {
-        //     radios[i].show();
-        // }
-        // for (var i = n; i < createdRadios; i++) {
-        //     radios[i].hide();
-        // }
     }
 
     return {
@@ -242,7 +227,7 @@ function ComboSelect(buttonboard, chordfinder) {
             var combos = [];
             var preCombos = chordfinder.getCombos(notes, buttonboard.layout.chords);
 
-            if (buttonboard.layout.columns < 12) { // layout does not contain every note.
+            if (buttonboard.layout.columns < 12) { // layout does not contain all 12 notes
                 for (var i = 0; i < preCombos.length; i++) {
                     if (buttonboard.doButtonsExist(preCombos[i])) combos.push(preCombos[i]);
                 }
@@ -447,24 +432,7 @@ function Chordfinder() {
 
         if (chordMatches.length) recurse([], 0);
 
-        // var ps = powerset(chordMatches);
-        // for (var i = 0; i < ps.length; i++) {
-        //     if (necessaryAndSufficient(ps[i], numNotes) === true) combos.push(ps[i]);
-        // }
-
         return combos;
-    }
-
-    function powerset(arr) {
-        var ps = [[]];
-
-        for (var i = 0; i < arr.length; i++) {
-            for (var j = 0, len=ps.length; j < len; j++) {
-                ps.push( ps[j].concat(arr[i]) );
-            }
-        }
-
-        return ps;
     }
 
     return {
@@ -483,9 +451,92 @@ function Chordfinder() {
     };
 }
 
+
+function Chordplayer() {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)(),
+        noteDuration = 2,
+        rootNote = 0,
+        decay,
+        soundToggle = $('#sound-toggle');
+
+    function getFrequency(note, octave) {
+        var freqIndex = (12*octave + getNote(note - rootNote) + rootNote - 12);
+        return 440 * Math.pow(2,  freqIndex / 12);
+    }
+
+    function init(numTones) {
+
+        // mute the previously sounding chord
+        if (decay) {
+            decay.gain.cancelScheduledValues(audioCtx.currentTime);
+            decay.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
+            // decay.disconnect();
+        } 
+
+        decay = audioCtx.createGain();
+        decay.connect(audioCtx.destination);
+
+        var scale = 0.5 / Math.sqrt(numTones);
+
+        // fade in
+        // decay.gain.setValueAtTime(0, audioCtx.currentTime);
+        // decay.gain.linearRampToValueAtTime(scale, audioCtx.currentTime + 0.1);
+
+        decay.gain.setValueAtTime(scale, audioCtx.currentTime);
+
+        decay.gain.linearRampToValueAtTime(0, audioCtx.currentTime + noteDuration);
+    }
+
+    function playNote(note, octave) {
+        var o = audioCtx.createOscillator();
+        o.frequency.value = getFrequency(note, octave, 0);
+        o.type = 'triangle';
+        o.connect(decay);
+
+        o.start();
+        o.stop(audioCtx.currentTime + 2*noteDuration);
+    }
+
+    return {
+        play: function(chordCombo) {
+            if (!soundToggle.prop('checked')) return;
+
+            var noteMap = {
+                lowOctave: {},
+                highOctave: {}
+            };
+
+            for (var i = 0; i < chordCombo.length; i++) {
+                var chord = chordCombo[i];
+
+                if (chord.chord.name === 'Note') {
+                    noteMap.lowOctave[chord.root] = true;
+                }
+                else {
+                    var interval = chord.chord.interval;
+                    for (var j = 0; j < interval.length; j++) {
+                        noteMap.highOctave[getNote(chord.root + interval[j])] = true;
+                    }
+                }
+            }
+
+            var numTones = Object.keys(noteMap.lowOctave).length + Object.keys(noteMap.highOctave).length;
+            init(numTones);
+
+            for (var n in noteMap.lowOctave) {
+                playNote(n, -1);
+            }
+            for (var n in noteMap.highOctave) {
+                playNote(n, 0);
+            }
+        }
+    };
+}
+
 var buttonboard = Buttonboard();
 var chordfinder = Chordfinder();
-var comboSelect = ComboSelect(buttonboard, chordfinder);
+var chordplayer = Chordplayer();
+var comboSelect = ComboSelect(buttonboard, chordfinder, chordplayer);
 var noteSelect = NoteSelect(comboSelect);
 AccordionLayoutSelect(buttonboard, noteSelect);
 
