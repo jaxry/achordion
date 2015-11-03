@@ -451,12 +451,32 @@ function Chordfinder() {
     };
 }
 
+function animateWithInterval(callback, x0, x1, duration) {
+    var stop = false,
+        startTime = Date.now(),
+        id = setInterval(tick, 1);
+
+    function tick() {
+        var time = Date.now() - startTime;
+
+        callback(x0 + (x1 - x0) * Math.min(time / duration, 1));
+        
+        if (time >= duration || stop) clearInterval(id);
+    }
+
+    function stopAnim() {
+        stop = true;
+    }
+
+    return stopAnim;
+}
 
 function Chordplayer() {
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)(),
         noteDuration = 2,
         rootNote = 0,
-        decay,
+        gain,
+        stopGainAnim,
         soundToggle = $('#sound-toggle');
 
     function getFrequency(note, octave) {
@@ -464,34 +484,30 @@ function Chordplayer() {
         return 440 * Math.pow(2,  freqIndex / 12);
     }
 
+    function fadeOut(audioParam, time) {
+        return animateWithInterval(function(x) {audioParam.value = x;}, audioParam.value, 0, time);
+    }
+
     function init(numTones) {
 
         // mute the previously sounding chord
-        if (decay) {
-            decay.gain.cancelScheduledValues(audioCtx.currentTime);
-            decay.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
-            // decay.disconnect();
+        if (stopGainAnim) {
+            stopGainAnim();
+            fadeOut(gain.gain, 100);
         } 
 
-        decay = audioCtx.createGain();
-        decay.connect(audioCtx.destination);
+        gain = audioCtx.createGain();
+        gain.connect(audioCtx.destination);
 
-        var scale = 0.5 / Math.sqrt(numTones);
-
-        // fade in
-        // decay.gain.setValueAtTime(0, audioCtx.currentTime);
-        // decay.gain.linearRampToValueAtTime(scale, audioCtx.currentTime + 0.1);
-
-        decay.gain.setValueAtTime(scale, audioCtx.currentTime);
-
-        decay.gain.linearRampToValueAtTime(0, audioCtx.currentTime + noteDuration);
+        gain.gain.value = 0.5 / Math.sqrt(numTones);
+        stopGainAnim = fadeOut(gain.gain, 1000 * noteDuration);
     }
 
     function playNote(note, octave) {
         var o = audioCtx.createOscillator();
         o.frequency.value = getFrequency(note, octave, 0);
         o.type = 'triangle';
-        o.connect(decay);
+        o.connect(gain);
 
         o.start();
         o.stop(audioCtx.currentTime + 2*noteDuration);
@@ -533,11 +549,11 @@ function Chordplayer() {
     };
 }
 
-var buttonboard = Buttonboard();
-var chordfinder = Chordfinder();
-var chordplayer = Chordplayer();
-var comboSelect = ComboSelect(buttonboard, chordfinder, chordplayer);
-var noteSelect = NoteSelect(comboSelect);
+var buttonboard = Buttonboard(),
+    chordfinder = Chordfinder(),
+    chordplayer = Chordplayer(),
+    comboSelect = ComboSelect(buttonboard, chordfinder, chordplayer),
+    noteSelect = NoteSelect(comboSelect);
 AccordionLayoutSelect(buttonboard, noteSelect);
 
 });
