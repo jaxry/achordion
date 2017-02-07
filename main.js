@@ -42,12 +42,12 @@ function AccordionLayout(columns, hasRow) {
 
     if (hasRow['7']) this.rows.push(new ButtonClass(constants.chords['7th']));
     if (hasRow['d']) this.rows.push(new ButtonClass(constants.chords['dim'], 3));
-    
+
     this.chords = {};
     for (var i = 0; i < this.rows.length; i++) {
         var chordClass = this.rows[i].chordClass;
         var name = chordClass.name;
-        
+
         if (!this.chords[name]) this.chords[name] = chordClass;
     }
 }
@@ -103,7 +103,7 @@ function Buttonboard() {
     function setIndentation(amount) {
         var names = container.find('.buttonboard-name');
 
-        var maxWidth = Math.max.apply(null, 
+        var maxWidth = Math.max.apply(null,
             names.map(function(i) {
                 return $(this).width() - i*amount;
             }).get()
@@ -146,7 +146,7 @@ function Buttonboard() {
 
             container.append(row);
         }
-        
+
         setIndentation(32);
 
     }
@@ -159,7 +159,7 @@ function Buttonboard() {
             for (var i = 0; i < chord_arr.length; i++) {
                 var root = chord_arr[i].root;
                 var chord = chord_arr[i].chord;
-                
+
                 for (var j = 0; j < buttons.length; j++) {
                     var b = buttons[j];
                     if (b.root === root && b.chord === chord) b.highlight(i);
@@ -170,7 +170,7 @@ function Buttonboard() {
             for (var i = 0; i < chord_arr.length; i++) {
                 var root = chord_arr[i].root;
                 var chord = chord_arr[i].chord;
-                
+
                 var found = false;
                 for (var j = 0; j < buttons.length; j++) {
                     var b = buttons[j];
@@ -263,7 +263,7 @@ function NoteSelect(comboSelect) {
     function checkboxChange(e) {
 
         var notes = container.find('input:checked')
-            .map(function(){ 
+            .map(function(){
                 return Number($(this).val());
             })
             .get();
@@ -356,10 +356,10 @@ function Chordfinder() {
 
         for (var c in chords) {
             var interval = chords[c].interval;
-            
+
             for (var n = 0; n < constants.notes.length; n++) {
                 if (isChordInNotes(noteObj, interval, n)) {
-                    
+
                     matches.push({
                         chord: chords[c],
                         root: n
@@ -382,7 +382,7 @@ function Chordfinder() {
 
             for (var j = 0; j < interval.length; j++) {
                 var note = getNote(combo[i].root + interval[j]);
-                
+
                 if (!matched[note]) {
                     matched[note] = 1;
                     matchCount++;
@@ -401,7 +401,7 @@ function Chordfinder() {
 
             for (var j = 0; j < interval.length; j++) {
                 var note = getNote(combo[i].root + interval[j]);
-                
+
                 if (matched[note] === 1) {
                     necessaryChords++;
                     break;
@@ -426,7 +426,7 @@ function Chordfinder() {
             if (ns !== 's') return;
 
             for (var i = curIndex; i < chordMatches.length; i++) {
-                recurse(curCombo.concat(chordMatches[i]), i+1);      
+                recurse(curCombo.concat(chordMatches[i]), i+1);
             }
         }
 
@@ -460,7 +460,7 @@ function animateWithInterval(callback, x0, x1, duration) {
         var time = Date.now() - startTime;
 
         callback(x0 + (x1 - x0) * Math.min(time / duration, 1));
-        
+
         if (time >= duration || stop) clearInterval(id);
     }
 
@@ -494,12 +494,12 @@ function Chordplayer() {
         if (stopGainAnim) {
             stopGainAnim();
             fadeOut(gain.gain, 100);
-        } 
+        }
 
         gain = audioCtx.createGain();
         gain.connect(audioCtx.destination);
 
-        gain.gain.value = 0.5 / Math.sqrt(numTones);
+        gain.gain.value = 0.2 / Math.sqrt(numTones);
         stopGainAnim = fadeOut(gain.gain, 1000 * noteDuration);
     }
 
@@ -540,10 +540,10 @@ function Chordplayer() {
             init(numTones);
 
             for (var n in noteMap.lowOctave) {
-                playNote(n, -1);
+                playNote(n, 0);
             }
             for (var n in noteMap.highOctave) {
-                playNote(n, 0);
+                playNote(n, 1);
             }
         }
     };
